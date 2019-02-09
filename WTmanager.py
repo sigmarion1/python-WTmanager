@@ -1,19 +1,41 @@
 from PyQt5.QtWidgets import *
 import sys
-import openpyxl
-
+from datetime import datetime
 import csv
 
 
 class MyWindow(QWidget):
 
     def __init__(self):
+
         super().__init__()
 
-        self.setWindowTitle("자리배치 프로그램 v1.0")
+        # declare widget variables
+        self.btnIn = QPushButton()
+        self.btnOut= QPushButton()
 
-        self.setGeometry(800, 200, 800, 600)
-        self.setFixedSize(1000, 800)
+        self.gridLayout = QGridLayout()
+        self.setLayout(self.gridLayout)
+
+        self.init_widget()
+
+    def init_widget(self):
+
+        self.setWindowTitle("출퇴근 기록기 v0.1")
+        self.setGeometry(800, 200, 100, 100)
+#        self.setFixedSize(200, 100)
+
+        self.btnIn.setText("출근")
+        self.gridLayout.addWidget(self.btnIn, 0, 1)
+
+        self.btnOut.setText("퇴근")
+        self.gridLayout.addWidget(self.btnOut, 0, 2)
+
+        check_prv_time()
+
+
+def check_prv_time():
+    print('check')
 
 
 if __name__ == "__main__":
