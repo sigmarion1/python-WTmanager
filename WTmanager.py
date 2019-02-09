@@ -1,4 +1,5 @@
-from PyQt5.QtWidgets import QWidget, QPushButton, QApplication, QHBoxLayout, QVBoxLayout, QLabel
+from PyQt5.QtCore import Qt
+from PyQt5.QtWidgets import QWidget, QPushButton, QApplication, QHBoxLayout, QVBoxLayout, QLabel, QSizePolicy
 import sys
 from datetime import datetime
 import csv
@@ -10,43 +11,127 @@ class MyWindow(QWidget):
 
         super().__init__()
 
-        # declare widget variables
+        self.lbName = QLabel()
+        self.btnName = QPushButton()
         self.btnIn = QPushButton()
         self.btnOut = QPushButton()
-        self.lbName = QLabel()
 
         self.hBoxLayout = QHBoxLayout()
+        self.hBoxLayoutT = QHBoxLayout()
+
         self.mainLayout = QVBoxLayout()
         self.setLayout(self.mainLayout)
 
         self.init_widget()
 
-    def init_menubar(self):
-        pass
-
     def init_widget(self):
 
         self.setWindowTitle("출퇴근 기록기 v0.1")
         self.setGeometry(800, 200, 100, 100)
-#        self.setFixedSize(200, 100)
+        self.setFixedSize(300, 120)
 
-        self.lbName.setText("XXX님의 출근기록")
+        self.lbName.setText("XXX님의 출근기록<br>"+str(datetime.now().date()))
+        self.lbName.setAlignment(Qt.AlignCenter)
+        self.lbName.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+        self.lbName.setStyleSheet("""
+            //border:1px solid #84bbf3;
+            color:#ffffff;
+            font-size:15px;
+            text-align:center;
+        """)
+
+        self.btnName.setText("사용자 변경")
+        self.btnName.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Minimum)
+        '''
+        self.btnName.setStyleSheet("""
+        QPushButton{
+            background-color:#44c767;
+            -moz-border-radius:28px;
+            -webkit-border-radius:28px;
+            border-radius:28px;
+            border:1px solid #18ab29;
+            display:inline-block;
+            cursor:pointer;
+            color:#ffffff;
+            font-family:Arial;
+            font-size:17px;
+            padding:16px 31px;
+            text-decoration:none;
+            text-shadow:0px 1px 0px #2f6627;
+        }
+        QPushButton:hover {
+            background-color:#5cbf2a;
+        }
+        QPushButton:active {
+            position:relative;
+            top:1px;
+        }
+                """) '''
 
         self.btnIn.setText("출근")
+        self.btnIn.clicked.connect(self.check_prv_time)
+        self.btnIn.setStyleSheet("""
+        QPushButton{
+            background-color:#44c767;
+            -moz-border-radius:28px;
+            -webkit-border-radius:28px;
+            border-radius:28px;
+            border:1px solid #18ab29;
+            display:inline-block;
+            cursor:pointer;
+            color:#ffffff;
+            font-family:Arial;
+            font-size:15px;
+            padding:16px 31px;
+            text-decoration:none;
+            text-shadow:0px 1px 0px #2f6627;
+        }
+        QPushButton:hover {
+            background-color:#5cbf2a;
+        }
+        QPushButton:active {
+            position:relative;
+            top:1px;
+        }
+                """)
 
         self.btnOut.setText("퇴근")
+        self.btnOut.setStyleSheet("""
+        QPushButton{
+        	background-color:#44c767;
+        	-moz-border-radius:28px;
+        	-webkit-border-radius:28px;
+        	border-radius:28px;
+        	border:1px solid #18ab29;
+        	display:inline-block;
+        	cursor:pointer;
+        	color:#ffffff;
+        	font-family:Arial;
+        	font-size:15px;
+        	padding:16px 31px;
+        	text-decoration:none;
+        	text-shadow:0px 1px 0px #2f6627;
+        }
+        QPushButton:hover {
+        	background-color:#5cbf2a;
+        }
+        QPushButton:active {
+        	position:relative;
+        	top:1px;
+        }
+                """)
+
+        self.hBoxLayoutT.addWidget(self.lbName)
+        self.hBoxLayoutT.addWidget(self.btnName)
 
         self.hBoxLayout.addWidget(self.btnIn)
         self.hBoxLayout.addWidget(self.btnOut)
 
-        self.mainLayout.addWidget(self.lbName)
+        self.mainLayout.addLayout(self.hBoxLayoutT)
         self.mainLayout.addLayout(self.hBoxLayout)
 
-        check_prv_time()
-
-
-def check_prv_time():
-    print('check')
+    def check_prv_time(self):
+            print(str(datetime.now()))
 
 
 if __name__ == "__main__":
@@ -54,46 +139,3 @@ if __name__ == "__main__":
     mywindow = MyWindow()
     mywindow.show()
     app.exec_()
-
-    ''''
-    
-           self.verticalLayoutL = QVBoxLayout(self.leftFrame)
-        self.gridLayout = QGridLayout()
-
-        self.gridLayout.setSpacing(20)
-
-        self.gridLayout.setColumnStretch(0, 2)
-        self.gridLayout.setColumnStretch(6, 2)
-
-        self.gridLayout.setRowStretch(0,20)
-        self.gridLayout.setRowStretch(7,2)
-
-        self.lbArray = list()
-
-        for i in range(6):
-            for j in range(5):
-                self.lb = QLabel(self)
-
-                self.lb.setText(str(i*5 + j + 1))
-                self.lb.setStyleSheet("""
-                    background-color: rgba(100, 255, 255, 0);
-                    color: white;
-                    font : 70px;
-                    text-align: center;
-                    border: 3px solid burlywood;
-                    border-radius: 10px;
-                    border-style: inset;
-                """)
-                self.lb.setFixedWidth(130)
-                self.lb.setFixedHeight(70)
-                self.lb.setAlignment(Qt.AlignCenter)
-                self.lbArray.append(self.lb)
-                self.gridLayout.addWidget(self.lb, i+1, j+1)
-
-
-
-        self.verticalLayoutL.addLayout(self.gridLayout)
-        self.verticalLayoutL.setSpacing(10)
-    
-    
-    '''
