@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import *
+from PyQt5.QtWidgets import QWidget, QPushButton, QApplication, QHBoxLayout, QVBoxLayout, QLabel
 import sys
 from datetime import datetime
 import csv
@@ -13,11 +13,16 @@ class MyWindow(QWidget):
         # declare widget variables
         self.btnIn = QPushButton()
         self.btnOut= QPushButton()
+        self.lbName = QLabel()
 
-        self.gridLayout = QGridLayout()
-        self.setLayout(self.gridLayout)
+        self.hBoxLayout = QHBoxLayout()
+        self.mainLayout = QVBoxLayout()
+        self.setLayout(self.mainLayout)
 
         self.init_widget()
+
+    def init_menubar(self):
+
 
     def init_widget(self):
 
@@ -26,10 +31,10 @@ class MyWindow(QWidget):
 #        self.setFixedSize(200, 100)
 
         self.btnIn.setText("출근")
-        self.gridLayout.addWidget(self.btnIn, 0, 1)
 
         self.btnOut.setText("퇴근")
-        self.gridLayout.addWidget(self.btnOut, 0, 2)
+
+
 
         check_prv_time()
 
