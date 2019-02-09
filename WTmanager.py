@@ -12,7 +12,7 @@ class MyWindow(QWidget):
 
         # declare widget variables
         self.btnIn = QPushButton()
-        self.btnOut= QPushButton()
+        self.btnOut = QPushButton()
         self.lbName = QLabel()
 
         self.hBoxLayout = QHBoxLayout()
@@ -22,6 +22,7 @@ class MyWindow(QWidget):
         self.init_widget()
 
     def init_menubar(self):
+        pass
 
 
     def init_widget(self):
@@ -30,11 +31,17 @@ class MyWindow(QWidget):
         self.setGeometry(800, 200, 100, 100)
 #        self.setFixedSize(200, 100)
 
+        self.lbName.setText("XXX님의 출근기록")
+
         self.btnIn.setText("출근")
 
         self.btnOut.setText("퇴근")
 
+        self.hBoxLayout.addWidget(self.btnln)
+        self.hBoxLayout.addWidget(self.btnOut)
 
+        self.mainLayout.addWidget(self.lbName)
+        self.mainLayout.addLayout(self.hBoxLayout)
 
         check_prv_time()
 
