@@ -24,7 +24,6 @@ class MyWindow(QWidget):
     def init_menubar(self):
         pass
 
-
     def init_widget(self):
 
         self.setWindowTitle("출퇴근 기록기 v0.1")
@@ -37,7 +36,7 @@ class MyWindow(QWidget):
 
         self.btnOut.setText("퇴근")
 
-        self.hBoxLayout.addWidget(self.btnln)
+        self.hBoxLayout.addWidget(self.btnIn)
         self.hBoxLayout.addWidget(self.btnOut)
 
         self.mainLayout.addWidget(self.lbName)
