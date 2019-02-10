@@ -3,6 +3,7 @@ from PyQt5.QtWidgets import QWidget, QPushButton, QApplication, QHBoxLayout, QVB
 from PyQt5.QtWidgets import QMessageBox
 import sys
 import csv
+from configparser import ConfigParser
 
 HEADER = ['Date','Clock In','Clock Out']
 
@@ -11,10 +12,16 @@ class MyWindow(QWidget):
     def __init__(self):
         super().__init__()
 
-        self.userName = '홍길동'
+        self.userName = ''
         self.nowDateTime = ''
         self.nowDate = ''
+        self.nowTime = ''
         self.fileData = []
+
+        self.config = ConfigParser()
+        self.config.read('WTmanager.ini')
+        self.userName = self.config.get('setting','userName')
+
 
         self.timer = QTimer()
         self.timer.timeout.connect(self.change_current_time)
@@ -54,7 +61,7 @@ class MyWindow(QWidget):
         self.btnName.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Minimum)
 
         self.btnIn.setText("출근")
-        self.btnIn.clicked.connect(self.file_data_read)
+        self.btnIn.clicked.connect(self.in_btn_clicked)
         self.btnIn.setStyleSheet("""
         QPushButton{
             background-color:#44c767;
@@ -81,7 +88,7 @@ class MyWindow(QWidget):
                 """)
 
         self.btnOut.setText("퇴근")
-        self.btnOut.clicked.connect(self.file_data_write)
+        self.btnOut.clicked.connect(self.out_btn_clicked)
         self.btnOut.setStyleSheet("""
         QPushButton{
         	background-color:#44c767;
@@ -116,13 +123,6 @@ class MyWindow(QWidget):
         self.mainLayout.addLayout(self.hBoxLayoutT)
         self.mainLayout.addLayout(self.hBoxLayout)
 
-    def print_csv(self):
-        f = open(self.userName+'.csv', 'w', encoding='utf-8', newline='')
-        wr = csv.writer(f)
-        wr.writerow([1,2,3,4,5])
-        wr.writerow([1,2,3,4,44,5])
-        f.close()
-
     def set_label_text(self):
         self.lbName.setText('현재 사용자 : ' + self.userName + ' 님<br>' + self.nowDateTime)
 
@@ -131,10 +131,14 @@ class MyWindow(QWidget):
         if ok:
             self.userName = text
             self.set_label_text()
+        self.config.set('setting', 'userName', self.userName)
+        with open('WTmanager.ini', 'w') as configfile:
+            self.config.write(configfile)
 
     def change_current_time(self):
         self.nowDateTime = QDateTime.currentDateTime().toString('yyyy-MM-dd hh:mm:ss')
         self.nowDate = str(self.nowDateTime[0:10])
+        self.nowTime = str(self.nowDateTime[11:])
         self.set_label_text()
 
     def file_data_read(self):
@@ -164,15 +168,53 @@ class MyWindow(QWidget):
             f.close()
 
         except:
-            QMessageBox.about(self, "주의", "파일 쓰기 실패")
-            app.exec_()
-
+            QMessageBox.about(self, "주의", "파일 쓰기 실패 <br> 파일이 열려져 있지 않은지 확인해주세요.")
+            sys.exit()
 
     def in_btn_clicked(self):
         self.file_data_read()
 
-        for line in self.fileData:
-            if()
+        for idx, val in enumerate(self.fileData):
+            if val[0] == self.nowDate:
+                reply = QMessageBox.question(self, "중복 일자 확인", "해당 일자에 출퇴근 기록이 존재합니다. <br> 다시 등록하시겠습니까?", QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
+                if reply == QMessageBox.Yes:
+                    self.fileData[idx][1] = self.nowTime
+                    self.file_data_write()
+                    QMessageBox.about(self, "성공", "출근 시간 기록하였습니다.")
+                    return
+                else:
+                    return
+
+        self.fileData.append([str(self.nowDate), str(self.nowTime), ''])
+        self.file_data_write()
+        QMessageBox.about(self, "성공", "출근 시간 기록하였습니다.")
+        return
+
+    def out_btn_clicked(self):
+        self.file_data_read()
+
+        for idx, val in enumerate(self.fileData):
+            if val[0] == self.nowDate:
+                self.fileData[idx][2] = self.nowTime
+                self.file_data_write()
+                QMessageBox.about(self, "성공", "퇴근 시간 기록하였습니다.")
+                return
+
+        reply = QMessageBox.question(self, "출근 기록 없음", "출근 기록이 없습니다. <br> 출근 시간 입력하여 진행하시겠습니까?",
+                                     QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
+        if reply == QMessageBox.Yes:
+            text, ok = QInputDialog.getText(self, '출근 시간 입력', '출근 시간을 입력하세요. 예시) 06:12:13')
+            if ok:
+                self.fileData.append([str(self.nowDate), str(text), str(self.nowTime)])
+                self.file_data_write()
+                QMessageBox.about(self, "성공", "퇴근 시간 기록하였습니다.")
+            else:
+                return
+        else:
+            return
+
+
+
 
 
 
